@@ -5,20 +5,39 @@ using MudBlazor.Services;
 using MudBlazorAsaasBilling.Components;
 using MudBlazorAsaasBilling.Components.Account;
 using MudBlazorAsaasBilling.Data;
+using MudBlazorAsaasBilling.Helper;
+using MudBlazorAsaasBilling.Repositories.Billings;
+using MudBlazorAsaasBilling.Repositories.Customers;
+using MudBlazorAsaasBilling.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
+builder.Services.AddControllers();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+builder.Services.AddSingleton(configuration);
+builder.Services.AddHttpClient<HttpHelper>();
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddScoped<IAsaasService, AsaasService>();
+
+
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+builder.Services.AddScoped<IBillingRepository, BillingRepository>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -32,7 +51,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+builder.Services.AddIdentityCore<ApplicationUser>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddSignInManager()
     .AddDefaultTokenProviders();
@@ -54,6 +73,8 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();

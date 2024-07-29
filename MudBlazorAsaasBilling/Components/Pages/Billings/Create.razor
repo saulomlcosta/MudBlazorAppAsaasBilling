@@ -1,0 +1,52 @@
+﻿@page "/billings/{CustomerId:int}/create"
+@using MudBlazorAsaasBilling.Enums
+@inherits BillingCreatePage
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<MudText Typo="Typo.h3">New Billing</MudText>
+
+<MudPaper Class="pa-8 mt-4">
+
+    <EditForm Model="@InputModel" OnValidSubmit="OnValidSubmitAsync">
+        <DataAnnotationsValidator />
+
+        <MudSelect T="string" Label="BillingType" @bind-Value="InputModel.BillingType">
+            <MudSelectItem Value="@("Boleto")" />
+            <MudSelectItem Value="@("Pix")" />
+        </MudSelect>
+
+        <MudTextField Label="Value"
+                      Variant="Variant.Outlined"
+                      HelperText="Required Field"
+                      @bind-Value="InputModel.Value"
+                      For="@(()=> InputModel.Value)" />
+
+        <MudTextField Label="Description"
+                      Variant="Variant.Outlined"
+                      HelperText="Required Field"
+                      @bind-Value="InputModel.Description"
+                      For="@(()=> InputModel.Description)" />
+
+        <MudDatePicker Label="Due Date"
+                       Editable="false"
+                       @bind-Date="DueDate"
+                       Variant="Variant.Outlined"
+                       MinDate="@MinDate"
+                       Placeholder="Due Date" />
+
+        <MudDivider Class="m-4" />
+
+        <MudButton Variant="Variant.Filled"
+                   StartIcon="@Icons.Material.Filled.Save"
+                   Color="Color.Info"
+                   Size="Size.Large"
+                   ButtonType="ButtonType.Submit">
+            SAVE
+        </MudButton>
+
+    </EditForm>
+
+</MudPaper>

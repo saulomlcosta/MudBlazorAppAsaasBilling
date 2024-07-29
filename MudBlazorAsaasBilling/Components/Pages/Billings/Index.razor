@@ -1,0 +1,58 @@
+﻿@page "/billings/{CustomerId:int}"
+@inherits IndexPage;
+
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [Authorize]
+
+<MudText Typo="Typo.h3">Billings</MudText>
+
+<MudButton Variant="Variant.Filled"
+           StartIcon="@Icons.Material.Filled.Add"
+           Color="Color.Info"
+           Size="Size.Large"
+           HRef="@($"billings/{CustomerId}/create")"
+           Class="mt-md-4 mb-4">New Billing</MudButton>
+
+<MudDataGrid Items="@Billings" Filterable="false" SortMode="@SortMode.Single" Groupable="false">
+    <Columns>
+        <PropertyColumn Property="x=>x.BillingType" />
+        <PropertyColumn Property="x=>x.Value" />
+        <PropertyColumn Property="x=>x.Description" />
+        <PropertyColumn Property="x=>x.DueDate" Format="dd/MM/yyyy" />
+        <TemplateColumn>
+            <HeaderTemplate>
+                <MudTh>Payment</MudTh>
+            </HeaderTemplate>
+            <CellTemplate>
+                <MudStack Row>
+                    @if (context.Item.IsPaid)
+                    {
+                        <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" />
+                    }
+                    else
+                    {
+                        <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Cancel" />
+                    }
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+        <TemplateColumn>
+            <CellTemplate>
+                <MudStack Row>
+                    <MudFab Size="Size.Small"
+                            Label="Edit"
+                            @onclick="@(()=> GoToUpdate(CustomerId, context.Item.Id))"
+                            StartIcon="@Icons.Material.Filled.Edit"
+                            Color="Color.Success" />
+
+                    <MudFab Size="Size.Small"
+                            Label="Delete"
+                            @onclick="@(()=> Delete(context.Item))"
+                            StartIcon="@Icons.Material.Filled.Delete"
+                            Color="Color.Error" />
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>

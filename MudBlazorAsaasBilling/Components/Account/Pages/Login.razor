@@ -86,7 +86,7 @@
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
-            RedirectManager.RedirectTo(ReturnUrl);
+            NavigationManager.NavigateTo("/customers");
         }
         else if (result.RequiresTwoFactor)
         {
